@@ -14,6 +14,26 @@ provider:
         - dynamodb:*
         - s3:*
       Resource: "*"
+  apiKeys:
+    - free:
+        - myFreeApiKey
+    - paid:
+        - myPaidApiKey
+  usagePlan:
+    - free:
+        quota:
+          limit: 1000
+          period: MONTH
+        throttle:
+          rateLimit: 5 # 5 api hits a seconds
+          burstLimit: 20
+    - paid:
+        # quota: not including quota means infinite api hit limit
+        #   limit: 10000
+        #   period: MONTH
+        throttle:
+          rateLimit: 50 # 5 api hits a seconds
+          burstLimit: 200
 
 plugins:
   - serverless-s3-sync
@@ -58,6 +78,7 @@ functions:
           path: create-file/{fileName}
           method: POST
           cors: true
+          private: true
   getFile:
     handler: functions/endpoints/getFile.handler
     events:
