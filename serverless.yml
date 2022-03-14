@@ -4,6 +4,13 @@ provider:
   name: aws
   runtime: nodejs12.x
   profile: SahejAWS
+  environment:
+    tableName: ${self:custom.tableName}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: "*"
 
 plugins:
   - serverless-s3-sync
@@ -20,10 +27,17 @@ custom:
 
 functions:
   getUser:
-    handler: functions/getUser.handler
+    handler: functions/endpoints/getUser.handler
     events:
       - http:
           path: get-user/{ID}
+          method: GET
+          cors: true
+  getPlayerScore:
+    handler: functions/endpoints/getPlayerScore.handler
+    events:
+      - http:
+          path: get-player-score/{ID}
           method: GET
           cors: true
 
