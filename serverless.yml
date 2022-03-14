@@ -1,5 +1,4 @@
 service: aws-sls-project
-frameworkVersion: "2"
 
 provider:
   name: aws
@@ -15,8 +14,13 @@ custom:
       localDir: UploadData
 
 functions:
-  hello:
-    handler: handler.hello
+  getUser:
+    handler: functions/getUser.handler
+    events:
+      - http:
+          path: get-user/{ID}
+          method: GET
+          cors: true
 
 resources:
   Resources:
