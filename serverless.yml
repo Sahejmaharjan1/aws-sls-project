@@ -6,10 +6,13 @@ provider:
   profile: SahejAWS
   environment:
     tableName: ${self:custom.tableName}
+    bucketName: ${self:custom.bucketName}
+
   iamRoleStatements:
     - Effect: Allow
       Action:
         - dynamodb:*
+        - s3:*
       Resource: "*"
 
 plugins:
@@ -20,10 +23,11 @@ package:
   individually: true
 
 custom:
-  s3Sync:
-    - bucketName: aws-sls-project-demo-upload-bucket-123987
-      localDir: UploadData
   tableName: player-points
+  bucketName: aws-sls-project-demo-upload-bucket-123987
+  s3Sync:
+    - bucketName: ${self:custom.bucketName}
+      localDir: UploadData
 
 functions:
   getUser:
@@ -47,13 +51,27 @@ functions:
           path: create-player-score/{ID}
           method: POST
           cors: true
+  createFile:
+    handler: functions/endpoints/createFile.handler
+    events:
+      - http:
+          path: create-file/{fileName}
+          method: POST
+          cors: true
+  getFile:
+    handler: functions/endpoints/getFile.handler
+    events:
+      - http:
+          path: get-file/{fileName}
+          method: GET
+          cors: true
 
 resources:
   Resources:
     DemoBucketUpload:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: aws-sls-project-demo-upload-bucket-123987
+        BucketName: ${self:custom.bucketName}
     DynamoDBTable:
       Type: AWS::DynamoDB::Table
       Properties:
