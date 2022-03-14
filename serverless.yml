@@ -1,0 +1,26 @@
+service: aws-sls-project
+frameworkVersion: "2"
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  profile: SahejAWS
+
+plugins:
+  - serverless-s3-sync
+
+custom:
+  s3Sync:
+    - bucketName: aws-sls-project-demo-upload-bucket-123987
+      localDir: UploadData
+
+functions:
+  hello:
+    handler: handler.hello
+
+resources:
+  Resources:
+    DemoBucketUpload:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: aws-sls-project-demo-upload-bucket-123987
