@@ -16,6 +16,7 @@ custom:
   s3Sync:
     - bucketName: aws-sls-project-demo-upload-bucket-123987
       localDir: UploadData
+  tableName: player-points
 
 functions:
   getUser:
@@ -32,3 +33,14 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: aws-sls-project-demo-upload-bucket-123987
+    DynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tableName}
+        AttributeDefinitions:
+          - AttributeName: ID
+            AttributeType: S
+        KeySchema:
+          - AttributeName: ID
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
