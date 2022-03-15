@@ -8,6 +8,7 @@ provider:
     - Effect: Allow
       Action:
         - comprehend:*
+        - ses:*
       Resource: "*"
 
 functions:
@@ -18,3 +19,7 @@ functions:
           path: analyse
           method: POST
           cors: true
+  sendReminder:
+    handler: functions/scheduleTasks/reminderEmail.handler
+    events:
+      - schedule: cron(0 9 ? * 7 *)
