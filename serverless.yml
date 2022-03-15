@@ -10,6 +10,8 @@ provider:
     - Effect: Allow
       Action:
         - dynamodb:*
+        - sns:SetSMSAttributes
+        - sns:Publish
       Resource: "*"
 
 custom:
@@ -36,6 +38,13 @@ functions:
     events:
       - websocket:
           route: message
+  sendSMS:
+    handler: functions/endpoints/sendSMS.handler
+    events:
+      - http:
+          path: send-sms
+          method: POST
+          cors: true
 
 resources:
   Resources:
