@@ -4,58 +4,17 @@ provider:
   name: aws
   runtime: nodejs12.x
   profile: SahejAWS
-  environment:
-    tableName: ${self:custom.tableName}
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - dynamodb:*
-        - sns:SetSMSAttributes
-        - sns:Publish
+        - comprehend:*
       Resource: "*"
 
-custom:
-  tableName: websocketUsers
-
 functions:
-  websocket-connect:
-    handler: functions/websockets/connect.handler
-    events:
-      - websocket:
-          route: $connect
-  websocket-disconnect:
-    handler: functions/websockets/disconnect.handler
-    events:
-      - websocket:
-          route: $disconnect
-  websocket-default:
-    handler: functions/websockets/default.handler
-    events:
-      - websocket:
-          route: $default
-  websocket-message:
-    handler: functions/websockets/message.handler
-    events:
-      - websocket:
-          route: message
-  sendSMS:
-    handler: functions/endpoints/sendSMS.handler
+  analyse:
+    handler: functions/endpoints/analyse.handler
     events:
       - http:
-          path: send-sms
+          path: analyse
           method: POST
           cors: true
-
-resources:
-  Resources:
-    WebsocketUserTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:custom.tableName}
-        AttributeDefinitions:
-          - AttributeName: ID
-            AttributeType: S
-        KeySchema:
-          - AttributeName: ID
-            KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
