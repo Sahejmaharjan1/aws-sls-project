@@ -47,6 +47,13 @@ functions:
           path: create-player-score/{ID}
           method: POST
           cors: true
+  updatePlayerScore:
+    handler: functions/endpoints/updatePlayerScore.handler
+    events:
+      - http:
+          path: update-player-score/{ID}
+          method: PUT
+          cors: true
 
 resources:
   Resources:
