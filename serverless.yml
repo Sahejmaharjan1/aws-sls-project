@@ -6,15 +6,30 @@ provider:
   profile: SahejAWS
   environment:
     tableName: ${self:custom.tableName}
+    signupTableName: ${self:custom.signupTableName}
   iamRoleStatements:
     - Effect: Allow
       Action:
         - dynamodb:*
+        - ses:*
       Resource: "*"
 
 plugins:
   - serverless-s3-sync
   - serverless-webpack
+  - serverless-step-functions
+
+stepFunctions:
+  validate: true
+  stateMachines:
+    reminderEmail:
+      name: reminderEmail
+      events:
+        - http:
+            path: signup-with-reminders
+            method: POST
+            cors: true
+      definition: ${file(./stepfunction.yml)}
 
 package:
   individually: true
@@ -24,6 +39,7 @@ custom:
     - bucketName: aws-sls-project-demo-upload-bucket-123987
       localDir: UploadData
   tableName: player-points
+  signupTableName: signup-table-name
 
 functions:
   getUser:
@@ -62,6 +78,13 @@ functions:
           method: GET
           cors: true
 
+  addSignup:
+    handler: functions/stepFunctionLambda/addSignup.handler
+  getSignup:
+    handler: functions/stepFunctionLambda/getSignup.handler
+  sendReminderEmail:
+    handler: functions/stepFunctionLambda/sendReminderEmail.handler
+
 resources:
   Resources:
     DemoBucketUpload:
@@ -89,3 +112,15 @@ resources:
                 KeyType: HASH
             Projection:
               ProjectionType: ALL
+
+    EmailSignupDynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.signupTableName}
+        AttributeDefinitions:
+          - AttributeName: ID
+            AttributeType: S
+        KeySchema:
+          - AttributeName: ID
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST

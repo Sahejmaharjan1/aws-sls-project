@@ -2,9 +2,11 @@
   "dependencies": {
     "serverless-s3-sync": "2",
     "serverless-webpack": "^5.6.1",
+    "uuid": "^8.3.2",
     "webpack": "^5.70.0"
   },
   "devDependencies": {
-    "serverless": "2"
+    "serverless": "2",
+    "serverless-step-functions": "^3.5.1"
   }
 }
