@@ -11,7 +11,7 @@ exports.handler = async (event) => {
     let ID = event.pathParameters.ID;
     if (data[ID]) {
         // return the data
-        return Responses._400(
+        return Responses._200(
             data[ID]
         )
     }
